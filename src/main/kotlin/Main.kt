@@ -1,27 +1,29 @@
 package org.example
-
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-data class User(val id: Int, val name: String)
+import org.example.Conexión.*
+import org.example.userDAO.*
+import org.example.AbstractFactory.*
+import org.example.Datos.User
 
 fun main() {
-    val c = Conexion()
+    val c = ConnectionBuilder()
 
-    if(c.c.isValid(10)){
-        c.c.use {
-            val fabrica:IFactory = FactoryBD()
-            val userDAO:IUserDAO = fabrica.crear()
+    if(c.connection.isValid(10)){
+        c.connection.use {
+            val fabrica:IFactory = FactoryDB()
+            val userDAO: IUserDAO = fabrica.crear()
 
-            val usuario = User(2, "Roberto")
-            userDAO.insertar(usuario)
+            val usuario = User(50, "Roberto")
+            var filasAfectadas = userDAO.insertar(usuario)
+            println("En la inserción, ha sido afectada $filasAfectadas fila.")
 
-            val usuario2 = User(41, "Paco")
-            userDAO.modificar(usuario2)
+            val usuario2 = User(50, "Paco")
+            filasAfectadas = userDAO.modificar(usuario2)
+            println("En la modificación, ha sido afectada $filasAfectadas fila.")
 
-            val usuario3 = User(40, "Pepe")
-            userDAO.eliminar(usuario3)
+            filasAfectadas = userDAO.eliminarPorID(49)
+            println("En la eliminación, ha sido afectada $filasAfectadas fila.")
 
-            val usuarios = userDAO.mostrar()
+            val usuarios = userDAO.obtenerTodos()
             print(usuarios)
         }
 
